@@ -40,7 +40,7 @@ export const doctors: Doctor[] = [
     name: 'Dr. Emily Rodriguez',
     specialty: 'Pediatrician',
     imageUrl: 'https://randomuser.me/api/portraits/women/45.jpg',
-    clinicAddress: '789 Children's Way, New York, NY 10001',
+    clinicAddress: "789 Children's Way, New York, NY 10001",
     offlineAvailable: true,
     onlineAvailable: false,
     rating: 4.8,
