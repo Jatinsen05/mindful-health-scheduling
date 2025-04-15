@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
 
-const User = sequelize.define('User', {
+const Doctor = sequelize.define('Doctor', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -11,17 +11,12 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING(100),
     allowNull: false
   },
-  email: {
+  specialty: {
     type: DataTypes.STRING(100),
-    allowNull: false,
-    unique: true
-  },
-  password: {
-    type: DataTypes.STRING(255),
     allowNull: false
   },
-  phone: {
-    type: DataTypes.STRING(20),
+  address: {
+    type: DataTypes.TEXT,
     allowNull: true
   },
   created_at: {
@@ -29,8 +24,8 @@ const User = sequelize.define('User', {
     defaultValue: DataTypes.NOW
   }
 }, {
-  tableName: 'users',
+  tableName: 'doctors',
   timestamps: false
 });
 
-export { User }; 
+export { Doctor }; 
