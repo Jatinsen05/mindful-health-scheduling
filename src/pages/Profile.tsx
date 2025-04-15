@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useHealthApp } from '@/contexts/HealthAppContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/components/ui/use-toast';
+import { LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const { currentUser } = useHealthApp();
@@ -32,11 +33,24 @@ export default function Profile() {
     });
   };
   
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    // This would normally handle logout logic
+    navigate('/auth');
+  };
+
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Your Profile</h1>
-        <p className="text-muted-foreground">Manage your account and preferences</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Your Profile</h1>
+          <p className="text-muted-foreground">Manage your account and preferences</p>
+        </div>
+        <Button variant="destructive" onClick={handleLogout}>
+          <LogOut className="mr-2 h-4 w-4" />
+          Logout
+        </Button>
       </div>
       
       <div className="flex flex-col md:flex-row gap-8">

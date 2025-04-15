@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +12,7 @@ import PastAppointments from "./pages/PastAppointments";
 import Prescriptions from "./pages/Prescriptions";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
 
 // Layout
 import { Layout } from "./components/layout/Layout";
@@ -38,6 +38,7 @@ const App = () => (
               <Route path="/prescriptions" element={<Prescriptions />} />
               <Route path="/profile" element={<Profile />} />
             </Route>
+            <Route path="/auth" element={<Auth />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
