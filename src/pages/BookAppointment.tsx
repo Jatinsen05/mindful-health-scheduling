@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Calendar as CalendarIcon, MapPin, Video, Phone, MessageSquare } from 'lucide-react';
+import { Search, Calendar as CalendarIcon, MapPin, Video, Phone, MessageSquare, UserSearch, IdCard } from 'lucide-react';
 import { useHealthApp } from '@/contexts/HealthAppContext';
 import { format, parseISO } from 'date-fns';
 import { Doctor, TimeSlot, AppointmentType, OnlineConsultationType } from '@/lib/types';
@@ -14,6 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 
 export default function BookAppointment() {
@@ -27,12 +27,27 @@ export default function BookAppointment() {
     updateAppointmentForm,
     appointmentFormData,
     bookAppointment,
-    timeSlots
+    timeSlots,
+    doctors
   } = useHealthApp();
 
   const [searchInput, setSearchInput] = useState('');
+  const [searchType, setSearchType] = useState<'name' | 'id' | 'specialty'>('name');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   
+  // Get unique specialties for the dropdown
+  const uniqueSpecialties = Array.from(new Set(doctors.map(doctor => doctor.specialty)));
+
+  // Handle search form submission with search type
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchType === 'specialty') {
+      searchDoctors('', searchInput); // Pass empty string as query and specialty as second parameter
+    } else {
+      searchDoctors(searchInput); // Pass the search input as query
+    }
+  };
+
   // Filter time slots by doctor and date
   const getFilteredTimeSlots = () => {
     if (!selectedDoctor || !selectedDate) return [];
@@ -47,8 +62,6 @@ export default function BookAppointment() {
       })
       .sort((a, b) => parseISO(a.startTime).getTime() - parseISO(b.startTime).getTime());
   };
-
-  const availableTimeSlots = getFilteredTimeSlots();
 
   // Render doctor cards
   const renderDoctorCard = (doctor: Doctor) => (
@@ -89,12 +102,6 @@ export default function BookAppointment() {
       </CardContent>
     </Card>
   );
-
-  // Handle search form submission
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    searchDoctors(searchInput);
-  };
 
   // Handle appointment type selection
   const handleAppointmentTypeChange = (value: AppointmentType) => {
@@ -145,25 +152,72 @@ export default function BookAppointment() {
         <p className="text-muted-foreground">Find a doctor and schedule your appointment</p>
       </div>
       
-      {/* Step 1: Search for a doctor */}
+      {/* Step 1: Search for a doctor with enhanced search options */}
       <Card>
         <CardHeader>
           <CardTitle>Search for a Doctor</CardTitle>
           <CardDescription>Find by name, ID, or specialty</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSearch} className="flex w-full max-w-lg items-center space-x-2">
-            <Input
-              placeholder="Search doctors..."
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              className="flex-1"
-            />
-            <Button type="submit">
-              <Search className="h-4 w-4 mr-2" />
-              Search
-            </Button>
+          <form onSubmit={handleSearch} className="space-y-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <Select value={searchType} onValueChange={(value) => setSearchType(value as 'name' | 'id' | 'specialty')}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Search by..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="name">
+                    <div className="flex items-center gap-2">
+                      <UserSearch className="h-4 w-4" />
+                      <span>Doctor Name</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="id">
+                    <div className="flex items-center gap-2">
+                      <IdCard className="h-4 w-4" />
+                      <span>Doctor ID</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="specialty">
+                    <div className="flex items-center gap-2">
+                      <MessageSquare className="h-4 w-4" />
+                      <span>Specialty</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+
+              {searchType === 'specialty' ? (
+                <Select 
+                  value={searchInput}
+                  onValueChange={setSearchInput}
+                >
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder="Select specialty..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {uniqueSpecialties.map((specialty) => (
+                      <SelectItem key={specialty} value={specialty}>
+                        {specialty}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  placeholder={`Search by ${searchType === 'name' ? 'doctor name' : 'doctor ID'}...`}
+                  type="text"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  className="flex-1"
+                />
+              )}
+
+              <Button type="submit" className="md:w-auto">
+                <Search className="h-4 w-4 mr-2" />
+                Search
+              </Button>
+            </div>
           </form>
           
           <div className="mt-6 space-y-4">

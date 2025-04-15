@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, ReactNode, useState } from 'react';
 import { 
   Doctor, 
@@ -77,11 +76,14 @@ export function HealthAppProvider({ children }: { children: ReactNode }) {
     const lowercaseQuery = query.toLowerCase();
     
     const filtered = allDoctors.filter(doctor => {
+      if (specialty) {
+        return doctor.specialty.toLowerCase() === specialty.toLowerCase();
+      }
+      
       const nameMatch = doctor.name.toLowerCase().includes(lowercaseQuery);
       const idMatch = doctor.id.toLowerCase().includes(lowercaseQuery);
-      const specialtyMatch = !specialty || doctor.specialty.toLowerCase() === specialty.toLowerCase();
       
-      return (nameMatch || idMatch) && specialtyMatch;
+      return nameMatch || idMatch;
     });
     
     setFilteredDoctors(filtered);
