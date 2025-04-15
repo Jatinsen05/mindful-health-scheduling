@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -62,6 +63,9 @@ export default function BookAppointment() {
       })
       .sort((a, b) => parseISO(a.startTime).getTime() - parseISO(b.startTime).getTime());
   };
+  
+  // Get available time slots for the selected date and doctor
+  const availableTimeSlots = getFilteredTimeSlots();
 
   // Render doctor cards
   const renderDoctorCard = (doctor: Doctor) => (
